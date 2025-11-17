@@ -191,16 +191,8 @@ const Attendance = () => {
           return {
             employee_username: emp.username,
             date,
-            checkIn: checkInRecord ? new Date(checkInRecord.timestamp).toLocaleTimeString('en-US', {
-              hour: '2-digit',
-              minute: '2-digit',
-              hour12: false
-            }) : undefined,
-            checkOut: checkOutRecord ? new Date(checkOutRecord.timestamp).toLocaleTimeString('en-US', {
-              hour: '2-digit',
-              minute: '2-digit',
-              hour12: false
-            }) : undefined,
+            checkIn: checkInRecord ? formatInTimeZone(new Date(checkInRecord.timestamp), TZ, 'HH:mm') : undefined,
+            checkOut: checkOutRecord ? formatInTimeZone(new Date(checkOutRecord.timestamp), TZ, 'HH:mm') : undefined,
             checkInLocation: checkInRecord?.location,
             checkOutLocation: checkOutRecord?.location,
             workingHours,
@@ -462,9 +454,10 @@ const Attendance = () => {
 
       // Create new records based on status
       if (newStatus === 'Present') {
-        // Create check-in and check-out records (10 AM to 7 PM = 9 hours)
-        const checkInTime = new Date(`${editingRecord.date}T10:00:00Z`);
-        const checkOutTime = new Date(`${editingRecord.date}T19:00:00Z`);
+        // Create check-in and check-out records (10 AM to 7 PM IST = 9 hours)
+        // IST is UTC+5:30, so 10:00 IST = 04:30 UTC and 19:00 IST = 13:30 UTC
+        const checkInTime = new Date(`${editingRecord.date}T04:30:00Z`);
+        const checkOutTime = new Date(`${editingRecord.date}T13:30:00Z`);
 
         const { error: insertError } = await supabase.from('attendance_records').insert([
           {
@@ -494,8 +487,8 @@ const Attendance = () => {
         
         console.log('Inserted Present records (10 AM - 7 PM)');
       } else if (newStatus === 'Incomplete') {
-        // Create only check-in record
-        const checkInTime = new Date(`${editingRecord.date}T10:00:00Z`);
+        // Create only check-in record (10:00 IST = 04:30 UTC)
+        const checkInTime = new Date(`${editingRecord.date}T04:30:00Z`);
 
         const { error: insertError } = await supabase.from('attendance_records').insert({
           employee_id: employeeData.id,
