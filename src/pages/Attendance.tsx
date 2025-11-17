@@ -94,6 +94,19 @@ const Attendance = () => {
     };
   }, [excludedDates]);
 
+  // Update selected employee details when attendance data changes
+  useEffect(() => {
+    if (isDetailsDialogOpen && selectedEmployee) {
+      // Find and update the selected employee data
+      const updatedEmployee = employeeSummaries.find(
+        emp => emp.username === selectedEmployee.username
+      );
+      if (updatedEmployee) {
+        setSelectedEmployee(updatedEmployee);
+      }
+    }
+  }, [employeeSummaries, isDetailsDialogOpen]);
+
   const fetchExcludedDates = async () => {
     try {
       const { data, error } = await supabase
@@ -1052,7 +1065,6 @@ const Attendance = () => {
               >
                 <option value="Present">Present</option>
                 <option value="Absent">Absent</option>
-                <option value="Incomplete">Incomplete</option>
               </select>
             </div>
 
