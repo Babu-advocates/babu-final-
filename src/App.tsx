@@ -60,6 +60,7 @@ import LitigationAnalytics from "./pages/LitigationAnalytics";
 
 // Protected Route Components
 import AdminProtectedRoute from "./components/ProtectedRoutes/AdminProtectedRoute";
+import AdminVerification from "./components/AdminVerification";
 import EmployeeProtectedRoute from "./components/ProtectedRoutes/EmployeeProtectedRoute";
 import BankEmployeeProtectedRoute from "./components/ProtectedRoutes/BankEmployeeProtectedRoute";
 import BankManagerProtectedRoute from "./components/ProtectedRoutes/BankManagerProtectedRoute";
@@ -362,7 +363,9 @@ const App = () => {
             {/* Admin Attendance Route */}
             <Route path="/attendance" element={
               <AdminProtectedRoute>
-                <Attendance />
+                <AdminVerification>
+                  <Attendance />
+                </AdminVerification>
               </AdminProtectedRoute>
             } />
             
