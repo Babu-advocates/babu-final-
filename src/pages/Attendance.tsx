@@ -462,9 +462,9 @@ const Attendance = () => {
 
       // Create new records based on status
       if (newStatus === 'Present') {
-        // Create check-in and check-out records
-        const checkInTime = new Date(`${editingRecord.date}T09:00:00Z`);
-        const checkOutTime = new Date(`${editingRecord.date}T18:00:00Z`);
+        // Create check-in and check-out records (10 AM to 7 PM = 9 hours)
+        const checkInTime = new Date(`${editingRecord.date}T10:00:00Z`);
+        const checkOutTime = new Date(`${editingRecord.date}T19:00:00Z`);
 
         const { error: insertError } = await supabase.from('attendance_records').insert([
           {
@@ -492,10 +492,10 @@ const Attendance = () => {
           throw insertError;
         }
         
-        console.log('Inserted Present records');
+        console.log('Inserted Present records (10 AM - 7 PM)');
       } else if (newStatus === 'Incomplete') {
         // Create only check-in record
-        const checkInTime = new Date(`${editingRecord.date}T09:00:00Z`);
+        const checkInTime = new Date(`${editingRecord.date}T10:00:00Z`);
 
         const { error: insertError } = await supabase.from('attendance_records').insert({
           employee_id: employeeData.id,
@@ -522,6 +522,9 @@ const Attendance = () => {
       setIsEditDialogOpen(false);
       setEditingRecord(null);
       setNewStatus("");
+      
+      // Manually refresh data to ensure immediate update
+      await fetchAttendanceData();
     } catch (error) {
       console.error('Error updating attendance:', error);
       showToast.error("Failed to update attendance");
